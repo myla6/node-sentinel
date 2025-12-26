@@ -13,6 +13,9 @@ import path from 'path';
  * 极其节省内存！适合处理海量文件。
  */
 
+
+import { analyzeFile } from '../utils/analyzer.js';
+
 /**
  * 递归扫描函数
  * depth: 当前递归深度，用来画缩进
@@ -29,9 +32,19 @@ async function scanDir(currentPath, depth = 0) {
             if (dirent.name === '.git' || dirent.name === 'node_modules') continue;
 
             let icon = '📄';
-            if (dirent.isDirectory()) icon = '📂';
+            let extraInfo = '';
+
+            if (dirent.isDirectory()) {
+                icon = '📂';
+            } else {
+                // 如果是文件，尝试分析一下
+                const fullPath = path.join(currentPath, dirent.name);
+                extraInfo = await analyzeFile(fullPath);
+                // 如果有额外信息，加个高亮颜色 (用 ANSI 转义码，比如 \x1b[36mCyan\x1b[0m)
+                if (extraInfo) extraInfo = ` \x1b[36m${extraInfo}\x1b[0m`;
+            }
             
-            console.log(`${prefix}${leaf} ${icon} ${dirent.name}`);
+            console.log(`${prefix}${leaf} ${icon} ${dirent.name}${extraInfo}`);
 
             // 核心递归逻辑：如果是文件夹，就自己调用自己，深度 +1
             if (dirent.isDirectory()) {
