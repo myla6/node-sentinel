@@ -1,6 +1,7 @@
 
 import { monitor } from './commands/monitor.js';
 import { crash } from './commands/crash.js';
+import { ls } from './commands/ls.js';
 
 export function run(args) {
     // console.log("Received arguments:", args);
@@ -13,11 +14,15 @@ export function run(args) {
     }
     
     const command = userArgs[0];
+    const arg1 = userArgs[1]; // 第二个参数，作为 ls 的目录路径
     
     if (command === 'monitor') {
         monitor();
     } else if (command === 'crash') {
         crash();
+    } else if (command === 'ls') {
+        // 如果用户没传 arg1，ls 函数里有默认值 '.'
+        ls(arg1);
     } else {
         console.log(`Unknown command: ${command}`);
     }
