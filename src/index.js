@@ -2,6 +2,7 @@
 import { monitor } from './commands/monitor.js';
 import { crash } from './commands/crash.js';
 import { ls } from './commands/ls.js';
+import { startServer } from './server/index.js';
 
 export function run(args) {
     // console.log("Received arguments:", args);
@@ -23,6 +24,8 @@ export function run(args) {
     } else if (command === 'ls') {
         // 如果用户没传 arg1，ls 函数里有默认值 '.'
         ls(arg1);
+    } else if (command === 'start') {
+        startServer();
     } else {
         console.log(`Unknown command: ${command}`);
     }

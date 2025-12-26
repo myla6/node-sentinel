@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sentinel Dashboard 🛡️</title>
+    <style>
+      body {
+        font-family: "Courier New", Courier, monospace;
+        background: #1a1a1a;
+        color: #00ff00;
+        padding: 20px;
+      }
+      .card {
+        border: 1px solid #00ff00;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+      }
+      h1 {
+        text-align: center;
+        border-bottom: 1px dashed #00ff00;
+        padding-bottom: 10px;
+      }
+      .value {
+        font-size: 2em;
+        font-weight: bold;
+      }
+      .label {
+        color: #888;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🛡️ Sentinel Live Monitor</h1>
+
+    <div class="grid">
+      <div class="card">
+        <div class="label">System Uptime</div>
+        <div class="value" id="uptime">Loading...</div>
+      </div>
+      <div class="card">
+        <div class="label">Heap Used</div>
+        <div class="value" id="heap">Loading...</div>
+      </div>
+    </div>
+
+    <script>
+      async function fetchData() {
+        try {
+          const res = await fetch("/api/status");
+          const data = await res.json();
+
+          // 简单的 DOM 更新
+          document.getElementById("uptime").innerText =
+            Math.floor(data.uptime) + "s";
+
+          const heapMB = (data.memory.heapUsed / 1024 / 1024).toFixed(2);
+          document.getElementById("heap").innerText = heapMB + " MB";
+        } catch (e) {
+          console.error("Fetch error", e);
+        }
+      }
+
+      // 每秒刷新一次 (这就把静态页面变成了动态仪表盘)
+      setInterval(fetchData, 8000);
+      fetchData();
+    </script>
+  </body>
+</html>
